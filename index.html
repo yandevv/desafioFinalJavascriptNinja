@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio da semana #29</title>
+    <script type="module" src="script.js"></script>
+</head>
+<body>
+    <div id="main" style="display: flex; flex-direction: column; align-items:center;">
+        <h1>Mostruário de Carros</h1>
+        <h2 data-js="txtCompany"></h2>
+        <strong data-js="txtTelefone"></strong>
+        <h3>Formulário de Carros:</h3>
+        <form style="display: flex; flex-direction: column; align-items: center; gap: 25px;">
+            <input type="file" data-js="inputImage" accept="image/png, image/jpeg"/>
+            <input type="text" data-js="inputMarca" placeholder="Marca/Modelo" style="width: 350px;"/>
+            <input type="text" data-js="inputAno" placeholder="Ano" style="width: 350px;"/>
+            <input type="text" data-js="inputPlaca" placeholder="Placa" style="width: 350px;"/>
+            <input type="text" data-js="inputCor" placeholder="Cor" style="width: 350px;"/>
+            <input type="submit" data-js="submitForm" value="Enviar Formulário"/>
+        </form>
+        <table data-js="tableCars" style="margin-top: 20px;">
+            <tr>
+                <th style="width: 250px; text-align: left;">Imagem</th>
+                <th style="width: 250px; text-align: left;">Marca</th>
+                <th style="width: 250px; text-align: left;">Ano</th>
+                <th style="width: 250px; text-align: left;">Placa</th>
+                <th style="width: 250px; text-align: left;">Cor</th>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
