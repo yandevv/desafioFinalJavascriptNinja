@@ -11,11 +11,11 @@ router.get('/', function(req, res) {
 
 router.post('/', function(req, res) {
   data.push({
-    image: req.body.image,
-    brandModel: req.body.brandModel,
-    year: req.body.year,
-    plate: req.body.plate,
-    color: req.body.color
+    imageLink: req.body.imageLink,
+    marca: req.body.marca,
+    ano: req.body.ano,
+    placa: req.body.placa,
+    cor: req.body.cor
   });
   console.log('[POST] /car:', JSON.stringify({
     body: req.body,
