@@ -6,13 +6,6 @@ import DOM from "./DOM.js"
   doc.addEventListener('DOMContentLoaded', app().init);
 
   function app() {
-    let carrosCadastrados = 0;
-
-    function removeCar(dataAtr) {
-      const $tgtTBody = doc.querySelector(dataAtr).parentNode;
-      $tgtTBody.parentNode.removeChild($tgtTBody);
-    }
-
     function init() {
       function submitHandler(e) {
         e.preventDefault();
@@ -27,17 +20,47 @@ import DOM from "./DOM.js"
         const fr = new FileReader();
 
         fr.onload = () => {
-          const vectorTrash = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXRyYXNoLTIiPjxwYXRoIGQ9Ik0zIDZoMTgiLz48cGF0aCBkPSJNMTkgNnYxNGMwIDEtMSAyLTIgMkg3Yy0xIDAtMi0xLTItMlY2Ii8+PHBhdGggZD0iTTggNlY0YzAtMSAxLTIgMi0yaDRjMSAwIDIgMSAyIDJ2MiIvPjxsaW5lIHgxPSIxMCIgeDI9IjEwIiB5MT0iMTEiIHkyPSIxNyIvPjxsaW5lIHgxPSIxNCIgeDI9IjE0IiB5MT0iMTEiIHkyPSIxNyIvPjwvc3ZnPg=="
-          $tableCars.innerHTML += `<tr data-js="carro${++carrosCadastrados}"><td><img style="max-width: 250px; max-height: 250px;" src="${fr.result}"/></td><td>${$inputMarca.value}</td><td>${$inputAno.value}</td><td>${$inputPlaca.value}</td><td>${$inputCor.value}</td><td><button data-js="btnDelCarro${carrosCadastrados}"><img src="${vectorTrash}"/></button></td></tr>`
-          doc.querySelector(`[data-js="btnDelCarro${carrosCadastrados}"]`).addEventListener('click', (e) => {
+          const tableRow = doc.createElement('tr');
+
+          const tableDataImg = doc.createElement('td');
+          const img = doc.createElement('img');
+          img.setAttribute('style', 'max-width: 250px; max-height: 250px;');
+          img.setAttribute('src', `${fr.result}`);
+          tableDataImg.appendChild(img);
+
+          const tableDataMarca = doc.createElement('td');
+          tableDataMarca.appendChild(doc.createTextNode(`${$inputMarca.value}`));
+
+          const tableDataAno = doc.createElement('td');
+          tableDataAno.appendChild(doc.createTextNode(`${$inputAno.value}`));
+
+          const tableDataPlaca = doc.createElement('td');
+          tableDataPlaca.appendChild(doc.createTextNode(`${$inputPlaca.value}`));
+
+          const tableDataCor = doc.createElement('td');
+          tableDataCor.appendChild(doc.createTextNode(`${$inputCor.value}`));
+          
+          const tableButton = doc.createElement('td');
+          const button = doc.createElement('button');
+          const trashVector = doc.createElement('img');
+          trashVector.setAttribute('src', './vectors/trash-2.svg');
+          button.appendChild(trashVector);
+          tableButton.appendChild(button);
+
+          tableRow.append(tableDataImg, tableDataMarca, tableDataAno, tableDataPlaca, tableDataCor, tableButton);
+          $tableCars.appendChild(tableRow);
+
+          button.addEventListener('click', (e) => {
             e.preventDefault();
-            app().removeCar(`[data-js="carro${carrosCadastrados}"]`);
+            tableRow.parentNode.removeChild(tableRow);
           })
         }
         fr.readAsDataURL($inputImage.files[0]);
       }
 
       doc.querySelector('[data-js="submitForm"]').addEventListener('click', submitHandler);
+
+      fetchCompanyInfo();
     }
 
     function fetchCompanyInfo() {
@@ -55,7 +78,6 @@ import DOM from "./DOM.js"
 
     return {
       "init": init,
-      "removeCar": removeCar,
       "fetchCompanyInfo": fetchCompanyInfo
     }
   }
