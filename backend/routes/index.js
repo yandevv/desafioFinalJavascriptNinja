@@ -24,4 +24,15 @@ router.post('/', function(req, res) {
   res.json({ message: 'success' });
 });
 
+router.delete('/', function(req, res) {
+  data = data.filter(function(car) {
+    return car.placa !== req.body.placa;
+  });
+  console.log('[DELETE] /car:', JSON.stringify({
+    body: req.body,
+    data
+  }, null, 2))
+  res.json({ body: data, message: 'Car(s) deleted by plate number successfully.' });
+});
+
 module.exports = router;
