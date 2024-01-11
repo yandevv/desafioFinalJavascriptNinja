@@ -2,7 +2,7 @@
 
 import DOM from "./DOM.js"
 
-(function(doc){
+(function (doc) {
   doc.addEventListener('DOMContentLoaded', app().init);
 
   function app() {
@@ -24,45 +24,93 @@ import DOM from "./DOM.js"
       })
     }
 
+    async function deleteCar(placa) {
+      await fetch('http://localhost:3000/car/', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ placa: placa })
+      })
+    }
+
+    function addTableHeaders($tableCars) {
+      const tableRow = doc.createElement('tr');
+
+      const tableHeaderImg = doc.createElement('th');
+      tableHeaderImg.setAttribute('style', 'width: 200px; text-align: left;');
+      tableHeaderImg.appendChild(doc.createTextNode('Imagem'));
+      
+      const tableHeaderAno = doc.createElement('th');
+      tableHeaderAno.setAttribute('style', 'width: 200px; text-align: left;');
+      tableHeaderAno.appendChild(doc.createTextNode('Ano'));
+
+      const tableHeaderPlaca = doc.createElement('th');
+      tableHeaderPlaca.setAttribute('style', 'width: 200px; text-align: left;');
+      tableHeaderPlaca.appendChild(doc.createTextNode('Placa'));
+
+      const tableHeaderCor = doc.createElement('th');
+      tableHeaderCor.setAttribute('style', 'width: 200px; text-align: left;');
+      tableHeaderCor.appendChild(doc.createTextNode('Cor'));
+      
+      const tableHeaderAcoes = doc.createElement('th');
+      tableHeaderAcoes.setAttribute('style', 'width: 200px; text-align: left;');
+      tableHeaderAcoes.appendChild(doc.createTextNode('Ações'));
+
+      tableRow.append(tableHeaderImg, tableHeaderAno, tableHeaderPlaca, tableHeaderCor, tableHeaderAcoes);
+      $tableCars.appendChild(tableRow);
+    }
+
     function refreshCars(cars) {
       const $tableCars = doc.querySelector('[data-js="tableCars"]');
 
-      cars.forEach((car) => {
-        const tableRow = doc.createElement('tr');
-  
-        const tableDataImg = doc.createElement('td');
-        const img = doc.createElement('img');
-        img.setAttribute('style', `width: 250px; height: 250px;`);
-        img.setAttribute('src', `${car.imageLink}`);
-        tableDataImg.appendChild(img);
-  
-        const tableDataMarca = doc.createElement('td');
-        tableDataMarca.appendChild(doc.createTextNode(`${car.marca}`));
-  
-        const tableDataAno = doc.createElement('td');
-        tableDataAno.appendChild(doc.createTextNode(`${car.ano}`));
-  
-        const tableDataPlaca = doc.createElement('td');
-        tableDataPlaca.appendChild(doc.createTextNode(`${car.placa}`));
-  
-        const tableDataCor = doc.createElement('td');
-        tableDataCor.appendChild(doc.createTextNode(`${car.cor}`));
-        
-        const tableButton = doc.createElement('td');
-        const button = doc.createElement('button');
-        const trashVector = doc.createElement('img');
-        trashVector.setAttribute('src', './vectors/trash-2.svg');
-        button.appendChild(trashVector);
-        tableButton.appendChild(button);
-  
-        tableRow.append(tableDataImg, tableDataMarca, tableDataAno, tableDataPlaca, tableDataCor, tableButton);
-        $tableCars.appendChild(tableRow);
+      $tableCars.innerHTML = '';
 
-        button.addEventListener('click', (e) => {
-          e.preventDefault();
-          tableRow.parentNode.removeChild(tableRow);
+      addTableHeaders($tableCars);
+
+      if (cars.length > 0) {
+        const docFragment = new DocumentFragment();
+
+        cars.forEach((car) => {
+          const tableRow = doc.createElement('tr');
+
+          const tableDataImg = doc.createElement('td');
+          const img = doc.createElement('img');
+          img.setAttribute('style', 'width: 250px; height: 250px;');
+          img.setAttribute('src', `${car.imageLink}`);
+          tableDataImg.appendChild(img);
+
+          const tableDataMarca = doc.createElement('td');
+          tableDataMarca.appendChild(doc.createTextNode(`${car.marca}`));
+
+          const tableDataAno = doc.createElement('td');
+          tableDataAno.appendChild(doc.createTextNode(`${car.ano}`));
+
+          const tableDataPlaca = doc.createElement('td');
+          tableDataPlaca.appendChild(doc.createTextNode(`${car.placa}`));
+
+          const tableDataCor = doc.createElement('td');
+          tableDataCor.appendChild(doc.createTextNode(`${car.cor}`));
+
+          const tableButton = doc.createElement('td');
+          const button = doc.createElement('button');
+          const trashVector = doc.createElement('img');
+          trashVector.setAttribute('src', './vectors/trash-2.svg');
+          button.appendChild(trashVector);
+          tableButton.appendChild(button);
+
+          tableRow.append(tableDataImg, tableDataMarca, tableDataAno, tableDataPlaca, tableDataCor, tableButton);
+          docFragment.append(tableRow);
+
+          button.addEventListener('click', async (e) => {
+            e.preventDefault();
+            await deleteCar(car.placa);
+            fetchCars();
+          })
         })
-      })
+
+        $tableCars.appendChild(docFragment);
+      }
     }
 
     function init() {
@@ -71,23 +119,24 @@ import DOM from "./DOM.js"
 
         await uploadCar();
 
-        app().fetchCars();
+        fetchCars();
       }
 
       doc.querySelector('[data-js="submitForm"]').addEventListener('click', submitHandler);
 
-      app().fetchCompanyInfo();
+      fetchCompanyInfo();
 
-      app().fetchCars();
+      fetchCars();
     }
 
     function fetchCompanyInfo() {
-      let fetchApi = fetch('company.json').then((response) => response.json()).then((companyInfo) => assignCompanyInfo(companyInfo));
+      const fetchApi = fetch('company.json').then((response) => response.json()).then((companyInfo) => assignCompanyInfo(companyInfo));
       fetchApi.catch((e) => console.error(`Erro: ${e}`))
     }
 
     function fetchCars() {
-      fetch('http://localhost:3000/car').then((response) => response.json()).then((response) => refreshCars(response));
+      const fetchCars = fetch('http://localhost:3000/car').then((response) => response.json()).then((response) => refreshCars(response));
+      fetchCars.catch((e) => console.error(`Erro: ${e}`));
     }
 
     function assignCompanyInfo(companyInfo) {
@@ -99,10 +148,7 @@ import DOM from "./DOM.js"
     }
 
     return {
-      "init": init,
-      "uploadCar": uploadCar,
-      "fetchCompanyInfo": fetchCompanyInfo,
-      "fetchCars": fetchCars
+      "init": init
     }
   }
 })(document)
